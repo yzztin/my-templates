@@ -1,0 +1,10 @@
+services:
+  xxx-server:
+    image: xxx:xxx
+    env_file:
+      - .env
+    ports:
+      - "8007:8007"
+    volumes:
+      - xxx:xxx
+    restart: always
