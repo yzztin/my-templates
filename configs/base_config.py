@@ -1,7 +1,6 @@
 import os
 import logging
 
-from h11 import SERVER
 from pydantic_settings import BaseSettings
 
 
