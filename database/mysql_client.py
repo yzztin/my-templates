@@ -2,7 +2,7 @@ import logging
 
 from flask_sqlalchemy import SQLAlchemy
 
-from configs import config, mysql_config
+from configs import config, MYSQL_CONFIG
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def init_db(app):
     :param app:
     :return:
     """
-    app.config["SQLALCHEMY_DATABASE_URI"] = mysql_config.SQLALCHEMY_DATABASE_URI
+    app.config["SQLALCHEMY_DATABASE_URI"] = MYSQL_CONFIG.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ECHO"] = False
 
@@ -32,7 +32,7 @@ def create_database():
     try:
         from sqlalchemy import create_engine, text
 
-        engine = create_engine(mysql_config.SQLALCHEMY_URI_WITHOUT_DATABASE, echo=True)
+        engine = create_engine(MYSQL_CONFIG.SQLALCHEMY_URI_WITHOUT_DATABASE, echo=True)
         with engine.connect() as conn:
             create_sql = f"CREATE DATABASE IF NOT EXISTS `{config.MYSQL_DB_NAME_PLUGIN}`"
             conn.execute(text(create_sql))

@@ -5,5 +5,5 @@ from configs.mysql_config import MysqlConfig
 
 load_dotenv()
 
-base_config = BaseConfig()
-mysql_config = MysqlConfig()
+BASE_CONFIG = BaseConfig()
+MYSQL_CONFIG = MysqlConfig()

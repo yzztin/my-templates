@@ -2,14 +2,14 @@ import logging
 import os.path
 from logging.handlers import RotatingFileHandler
 
-from configs import base_config
+from configs import BASE_CONFIG
 
 
 def setup_logger():
     """
     最简单的日志配置，日志信息直接输出到终端
     """
-    log_level = getattr(logging, base_config.LOG_LEVEL.upper(), logging.INFO)
+    log_level = getattr(logging, BASE_CONFIG.LOG_LEVEL.upper(), logging.INFO)
 
     # 设置日志格式
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -26,7 +26,7 @@ def setup_logger_to_file():
     """
     设置日志记录到文件
     """
-    log_level = getattr(logging, base_config.LOG_LEVEL.upper(), logging.INFO)
+    log_level = getattr(logging, BASE_CONFIG.LOG_LEVEL.upper(), logging.INFO)
 
     # 设置日志格式
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -36,7 +36,7 @@ def setup_logger_to_file():
     logger.setLevel(log_level)
 
     # 创建一个文件处理器，并设置日志文件的最大大小和备份数量
-    file_name = os.path.join(base_config.STORAGE_PATH, "xxx.log")
+    file_name = os.path.join(BASE_CONFIG.STORAGE_PATH, "xxx.log")
     file_handler = RotatingFileHandler(
         filename=file_name,
         maxBytes=10 * 1024 * 1024,  # 10 MB

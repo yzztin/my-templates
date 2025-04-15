@@ -2,7 +2,7 @@ import logging
 
 from apps.create_app import create_app
 from apps.xxx.router import router as xxx_router
-from configs import base_config
+from configs import BASE_CONFIG
 
 
 app = create_app()
@@ -20,11 +20,11 @@ def ping():
 if __name__ == "__main__":
     import uvicorn
 
-    logger.info(f"启动服务: {base_config.SERVER_HOST}:{base_config.SERVER_PORT}")
+    logger.info(f"启动服务: {BASE_CONFIG.SERVER_HOST}:{BASE_CONFIG.SERVER_PORT}")
 
     uvicorn.run(
         app,
-        host=base_config.SERVER_HOST,
-        port=base_config.SERVER_PORT,
+        host=BASE_CONFIG.SERVER_HOST,
+        port=BASE_CONFIG.SERVER_PORT,
         reload=False,
     )
