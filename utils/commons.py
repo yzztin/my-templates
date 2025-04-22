@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from uuid import uuid4
 
-from fastapi import UploadFile
+from starlette.datastructures import UploadFile
 
 
 def get_uuid() -> str:
@@ -32,7 +32,7 @@ def makefile_by_time(file_extension: str, part_name: str = "", dir_path: str = N
     return file_path
 
 
-def ensure_file_bytes(file: str | bytes | UploadFile) -> bytes:
+async def ensure_file_bytes(file: str | bytes | UploadFile) -> bytes:
     """
     确保得到文件的字节数据
     :param file: 文件路径
@@ -46,7 +46,7 @@ def ensure_file_bytes(file: str | bytes | UploadFile) -> bytes:
     elif isinstance(file, bytes):
         file_bytes = file
     elif isinstance(file, UploadFile):
-        file_bytes = file.read()
+        file_bytes = await file.read()
     else:
         raise ValueError(f"file 参数错误：{type(file)}")
 
