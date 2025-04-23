@@ -1,4 +1,4 @@
-FROM python:3.10-slim as base
+FROM python:3.12-book as base
 
 # 设置非交互模式，避免构建过程中阻塞
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 安装其它工具并删除缓存
 RUN apt-get install -y --no-install-recommends \
-    vim &&
+    vim && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 CMD ["python", "main.py"]
