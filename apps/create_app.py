@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from configs.log import setup_logger
+from configs import BASE_CONFIG
 from utils.exceptions import ExceedRateLimitException
 
 
@@ -10,9 +11,18 @@ def create_app() -> FastAPI:
     # 初始化日志
     setup_logger()
 
+    if BASE_CONFIG.IS_PRODUCTION:
+        docs_url = None
+        redoc_url = None
+    else:
+        docs_url = "/docs"
+        redoc_url = "/redoc"
+
     app = FastAPI(
-        title="xxxx API 接口服务",
-        description="提供 xxxx 功能",
+        title="audio API 接口服务",
+        description="提供音频处理相关接口",
+        docs_url=docs_url,
+        redoc_url=redoc_url,
     )
 
     # 添加CORS中间件
