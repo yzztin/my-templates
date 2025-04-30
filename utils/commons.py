@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from uuid import uuid4
+from pathlib import Path
 
 from starlette.datastructures import UploadFile
 
@@ -11,8 +12,14 @@ def get_uuid() -> str:
     """
     return uuid4().hex
 
+def get_filename_and_extension(file_path: str) -> tuple[str, str]:
+    """
+    获取文件名和扩展名，如 test.txt -> (test, .txt)
+    """
+    return Path(file_path).stem, Path(file_path).suffix.lower()
 
-def makefile_by_time(file_extension: str, part_name: str = "", dir_path: str = None) -> str:
+
+def makefile_by_time(file_extension: str, part_name: str = "", dir_path: str | None = None) -> str:
     """
     根据当前时间戳生成文件名或路径
     :param file_extension: 文件名后缀
@@ -23,7 +30,7 @@ def makefile_by_time(file_extension: str, part_name: str = "", dir_path: str = N
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-4]
     if part_name:
         part_name = f"{part_name[:10].strip()}-"
-    file_path = f"{part_name}{timestamp}.{file_extension}"
+    file_path = f"{part_name}{timestamp}.{file_extension.lstrip('.')}"
 
     if dir_path:
         os.makedirs(dir_path, exist_ok=True)

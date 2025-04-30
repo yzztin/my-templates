@@ -33,3 +33,5 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 log_cli = true
 log_cli_level = "DEBUG"
+addopts = ["-vv", "--capture=no", "--show-capture=no", "--showlocals", "--tb=long"]
+asyncio_default_fixture_loop_scope = "function"

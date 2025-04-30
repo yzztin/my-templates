@@ -1,5 +1,6 @@
 import os
 import logging
+from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
@@ -9,11 +10,14 @@ logger = logging.getLogger(__name__)
 
 class BaseConfig(BaseSettings):
     # Program base config
-    ABSOLUTE_BASE_PATH: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    STORAGE_PATH: str = os.path.join(ABSOLUTE_BASE_PATH, "storage")
+    ABSOLUTE_BASE_PATH: Path = Path(__file__).resolve().parent.parent
+    STORAGE_PATH: Path = ABSOLUTE_BASE_PATH / "storage"
+
+    # Server config
     LOG_LEVEL: str = "INFO"
     SERVER_HOST: str = "0.0.0.0"
-    SERVER_PORT: int = 8000
+    SERVER_PORT: int = 8900
+    IS_PRODUCTION: bool = False
 
     # minio 配置
     MINIO_ENDPOINT: str
@@ -35,3 +39,13 @@ class BaseConfig(BaseSettings):
     MYSQL_PASSWORD: str
     MYSQL_DB_NAME_PLUGIN: str
     # MYSQL_DB_NAME_AIGC: str
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ensure_directories()
+
+    def ensure_directories(self):
+        for path in [
+            self.STORAGE_PATH,
+        ]:
+            path.mkdir(parents=True, exist_ok=True)
