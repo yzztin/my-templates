@@ -9,7 +9,7 @@ class MysqlConfig(BaseConfig):
         return (
             f"mysql+pymysql://"
             f"{quote_plus(self.MYSQL_USER)}:{quote_plus(self.MYSQL_PASSWORD)}"
-            f"@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DB_NAME_PLUGIN}"
+            f"@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DB_NAME}"
         )
 
     @property

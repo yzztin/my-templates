@@ -1,13 +1,18 @@
 import logging
 
 from apps.create_app import create_app
-from apps.xxx.router import router as xxx_router
+from apps.example.router.examble_router import router as example_router
 from configs import BASE_CONFIG
+from database.mysql_client import init_db, create_database
 
 
 app = create_app()
 
-app.include_router(xxx_router, prefix="/xxx")
+# 初始化数据库
+create_database()
+init_db()
+
+app.include_router(example_router, prefix="/example")
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +25,7 @@ def ping():
 if __name__ == "__main__":
     import uvicorn
 
-    logger.info(f"启动服务: {BASE_CONFIG.SERVER_HOST}:{BASE_CONFIG.SERVER_PORT}")
+    logger.info(f"启动服务: {BASE_CONFIG.model_dump()}")
 
     uvicorn.run(
         app,

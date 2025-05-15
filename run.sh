@@ -7,7 +7,7 @@ source .venv/bin/activate
 
 echo "使用的 python：$(which python)"
 
-LOG_PATH=log.log
+LOG_PATH=server.log
 
 nohup python main.py > $LOG_PATH 2>&1 &
 

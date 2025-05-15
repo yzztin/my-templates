@@ -6,4 +6,4 @@ from configs.mysql_config import MysqlConfig
 load_dotenv()
 
 BASE_CONFIG = BaseConfig()
-MYSQL_CONFIG = MysqlConfig()
+MYSQL_CONFIG = MysqlConfig()  # type: ignore

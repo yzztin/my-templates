@@ -1,23 +1,25 @@
 import logging
 import os
+from tkinter import N
 
 from minio import Minio
 from minio.error import S3Error
 
-from configs import config
-from utils.base_singleton import BaseSingleton
+from configs import BASE_CONFIG
+from utils.singleton_meta import SingletonMeta
+from utils.commons import get_uuid
 
 logger = logging.getLogger(__name__)
 
 
-class MinioClient(BaseSingleton):
-    FILE_DOWNLOAD_PATH = os.path.join(config.DATA_PATH, "minio_downloads")
+class MinioClient(SingletonMeta):
+    FILE_DOWNLOAD_PATH = os.path.join(BASE_CONFIG.STORAGE_PATH, "minio_downloads")
 
     def __init__(self):
-        self.endpoint = config.MINIO_ENDPOINT
-        self.access_key = config.MINIO_ACCESS_KEY
-        self.secret_key = config.MINIO_SECRET_KEY
-        self.bucket_name = config.MINIO_BUCKET_NAME
+        self.endpoint = BASE_CONFIG.MINIO_HOST + ":" + BASE_CONFIG.MINIO_PORT
+        self.access_key = BASE_CONFIG.MINIO_ACCESS_KEY
+        self.secret_key = BASE_CONFIG.MINIO_SECRET_KEY
+        self.bucket_name = BASE_CONFIG.MINIO_BUCKET_NAME
         self.minio_client = self._init_minio_client()
 
     def _init_minio_client(self):
@@ -33,12 +35,10 @@ class MinioClient(BaseSingleton):
         :param file_path: 完整的本地文件地址
         :return: 文件上传到 minio 的路径 id 值
         """
-        import uuid
-
         if not os.path.exists(file_path):
-            raise f"The file '{file_path}' does not exist."
+            raise FileNotFoundError(f"文件不存在 '{file_path}'")
 
-        file_id = str(uuid.uuid4())
+        file_id = get_uuid()
         file_name = file_path.split("/")[-1]
         upload_file_path = f"{file_id}/{file_name}"
         try:
@@ -48,7 +48,7 @@ class MinioClient(BaseSingleton):
         except S3Error as e:
             logger.error(f"Error occurred when uploading '{file_path}': {e}")
 
-    def download_file(self, file_id) -> list:
+    def download_file(self, file_id) -> list | None:
         """
         通过 file_id 从 minio 下载文件
         :param file_id:
@@ -76,10 +76,3 @@ class MinioClient(BaseSingleton):
 
         except S3Error as e:
             logger.error(f"Error occurred when downloading '{file_id}': {e}")
-
-
-if __name__ == "__main__":
-    file_path = "../../tests/files_test/test.txt"
-    minio_client = MinioClient()
-    # minio_client.upload_file(file_path)
-    minio_client.download_file("b2d44560-0597-4b3e-9f51-86e74f56a697")

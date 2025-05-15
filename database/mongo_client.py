@@ -5,16 +5,16 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.mongo_client import MongoClient as PyMongoClient
 from pymongo.errors import DocumentTooLarge
 
-from configs import config
-from utils.base_singleton import BaseSingleton
+from configs import BASE_CONFIG
+from utils.singleton_meta import SingletonMeta
 
 logger = logging.getLogger(__name__)
 
 
-class MongoClient(BaseSingleton):
-    MONGO_URI = f"mongodb://{config.MONGO_USER}:{config.MONGO_PASSWORD}@{config.MONGO_HOST}:{config.MONGO_PORT}"
-    MONGO_DB_NAME = config.MONGO_DB_NAME
-    MONGO_COLLECTION_NAME = "wireshark"
+class MongoClient(SingletonMeta):
+    MONGO_URI = f"mongodb://{BASE_CONFIG.MONGO_USER}:{BASE_CONFIG.MONGO_PASSWORD}@{BASE_CONFIG.MONGO_HOST}:{BASE_CONFIG.MONGO_PORT}"
+    MONGO_DB_NAME = BASE_CONFIG.MONGO_DB_NAME
+    MONGO_COLLECTION_NAME = "xxxx"
 
     def __init__(self):
         self.collection_name = self.MONGO_COLLECTION_NAME
@@ -23,22 +23,22 @@ class MongoClient(BaseSingleton):
         self.collection = self.mongo_db[self.MONGO_COLLECTION_NAME]
 
     def _init_mongo_client(self, is_async: bool = False):
-        if config.MONGO_USER and config.MONGO_PASSWORD:
+        if BASE_CONFIG.MONGO_USER and BASE_CONFIG.MONGO_PASSWORD:
             self.MONGO_URI = (
-                f"mongodb://{config.MONGO_USER}:{config.MONGO_PASSWORD}@{config.MONGO_HOST}:{config.MONGO_PORT}"
+                f"mongodb://{BASE_CONFIG.MONGO_USER}:{BASE_CONFIG.MONGO_PASSWORD}@{BASE_CONFIG.MONGO_HOST}:{BASE_CONFIG.MONGO_PORT}"
             )
         else:
-            self.MONGO_URI = f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}"
+            self.MONGO_URI = f"mongodb://{BASE_CONFIG.MONGO_HOST}:{BASE_CONFIG.MONGO_PORT}"
 
         if is_async:
             logger.info(
-                f"异步 AsyncIOMotorClient 连接 mongodb: {config.MONGO_HOST}:{config.MONGO_PORT}, "
+                f"异步 AsyncIOMotorClient 连接 mongodb: {BASE_CONFIG.MONGO_HOST}:{BASE_CONFIG.MONGO_PORT}, "
                 f"db_name: {self.MONGO_DB_NAME}, collection_name: {self.collection_name}"
             )
             return AsyncIOMotorClient(self.MONGO_URI)
         else:
             logger.info(
-                f"同步 MongoClient 连接 mongodb: {config.MONGO_HOST}:{config.MONGO_PORT}, "
+                f"同步 MongoClient 连接 mongodb: {BASE_CONFIG.MONGO_HOST}:{BASE_CONFIG.MONGO_PORT}, "
                 f"db_name: {self.MONGO_DB_NAME}, collection_name: {self.collection_name}"
             )
             return PyMongoClient(self.MONGO_URI)
@@ -75,18 +75,3 @@ class MongoClient(BaseSingleton):
 
     def find_by_page(self, condition: dict, page: int, page_size: int):
         return self.collection.find(condition).skip((page - 1) * page_size).limit(page_size)
-
-
-if __name__ == "__main__":
-    import asyncio  # noqa: F401
-
-    # mongo_client = MongoClient()
-    from configs.middlewares import mongo_client
-
-    # asyncio.run(mongo_client.update({"fileid": "b2d44560-0597-4b3e-9f51-86e74f56a697"}))
-    # data = asyncio.run(mongo_client.find({"fileid": "b2d44560-0597-4b3e-9f51-86e74f56a697"}))
-    # data = mongo_client.find({"fileid": "b2d44560-0597-4b3e-9f51-86e74f56a697"})
-    data = mongo_client.find(
-        {"analyze_type": "CAP_FTP", "content": None, "fileid": "ca507210-1a4e-40fe-9d31-087c338906d4"}
-    )
-    print(data)

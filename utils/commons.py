@@ -1,4 +1,6 @@
 import os
+import time
+from typing import Literal
 from datetime import datetime
 from uuid import uuid4
 from pathlib import Path
@@ -11,6 +13,13 @@ def get_uuid() -> str:
     生成 str 类型的 32 位 uuid
     """
     return uuid4().hex
+
+def get_timestamp(time_unit: Literal["s", "ms"] = "ms") -> int:
+    """
+    生成 int 类型的时间戳，默认为毫秒级
+    :param time_unit: 时间戳单位，s 为秒，ms 为毫秒
+    """
+    return int(time.time() * 1000) if time_unit == "ms" else int(time.time())
 
 def get_filename_and_extension(file_path: str) -> tuple[str, str]:
     """

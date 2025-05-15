@@ -17,10 +17,12 @@ class BaseConfig(BaseSettings):
     LOG_LEVEL: str = "INFO"
     SERVER_HOST: str = "0.0.0.0"
     SERVER_PORT: int = 8900
+    SERVER_API_TOKEN: str | None = None
     IS_PRODUCTION: bool = False
 
     # minio 配置
-    MINIO_ENDPOINT: str
+    MINIO_HOST: str
+    MINIO_PORT: str
     MINIO_ACCESS_KEY: str
     MINIO_SECRET_KEY: str
     MINIO_BUCKET_NAME: str
@@ -37,8 +39,7 @@ class BaseConfig(BaseSettings):
     MYSQL_PORT: str
     MYSQL_USER: str
     MYSQL_PASSWORD: str
-    MYSQL_DB_NAME_PLUGIN: str
-    # MYSQL_DB_NAME_AIGC: str
+    MYSQL_DB_NAME: str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
