@@ -4,6 +4,7 @@ from apps.create_app import create_app
 from apps.example.router.examble_router import router as example_router
 from configs import BASE_CONFIG
 from database.mysql_client import init_db, create_database
+from middlewares.token_verify import BearerTokenMiddleware
 
 
 app = create_app()
@@ -13,6 +14,7 @@ create_database()
 init_db()
 
 app.include_router(example_router, prefix="/example")
+app.add_middleware(BearerTokenMiddleware)
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ from configs import BASE_CONFIG
 
 
 class BearerTokenMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, protected_paths: list[str] | None = None):
+    def __init__(self, app, *, protected_paths: list[str] | None = None):
         """
         默认使用 apps 目录下的文件夹作为需要 token 校验的路由前缀
         """
@@ -30,7 +30,7 @@ class BearerTokenMiddleware(BaseHTTPMiddleware):
             bearer_token = auth_header[len("Bearer ") :].strip()
 
             if bearer_token != self.token:
-                raise PermissionError("Wrong token")
+                raise PermissionError("Token error")
 
         return await call_next(request)
 

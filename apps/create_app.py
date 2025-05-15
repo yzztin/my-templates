@@ -38,15 +38,15 @@ def create_app() -> FastAPI:
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
         match exc:
+            case PermissionError():
+                return JSONResponse(status_code=403, content={"msg": "权限拒绝", "detail": str(exc)})
             case FileNotFoundError():
-                return JSONResponse(status_code=404, content={"detail": str(exc)})
+                return JSONResponse(status_code=404, content={"msg": "文件未找到", "detail": str(exc)})
             case ValueError():
-                return JSONResponse(status_code=400, content={"detail": "无效输入"})
+                return JSONResponse(status_code=400, content={"msg": "无效输入", "detail": str(exc)})
             case TimeoutError():
-                return JSONResponse(status_code=408, content={"detail": "请求超时"})
-            case ExceedRateLimitException():
-                return JSONResponse(status_code=429, content={"detail": str(exc)})
+                return JSONResponse(status_code=408, content={"msg": "请求超时"})
             case _:
-                return JSONResponse(status_code=500, content={"detail": "服务器内部错误"})
+                return JSONResponse(status_code=500, content={"msg": "服务器内部错误"})
 
     return app
