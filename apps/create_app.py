@@ -19,8 +19,8 @@ def create_app() -> FastAPI:
         redoc_url = "/redoc"
 
     app = FastAPI(
-        title="audio API 接口服务",
-        description="提供音频处理相关接口",
+        title="",
+        description="",
         docs_url=docs_url,
         redoc_url=redoc_url,
     )
