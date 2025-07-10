@@ -24,6 +24,7 @@ def create_app(lifespan=None) -> FastAPI:
         description="",
         docs_url=docs_url,
         redoc_url=redoc_url,
+        lifespan=lifespan,
     )
 
     # 添加CORS中间件
