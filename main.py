@@ -1,4 +1,7 @@
 import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 
 from apps.create_app import create_app
 from apps.example.router.examble_router import router as example_router
@@ -7,11 +10,15 @@ from database.mysql_client import init_db, create_database
 from middlewares.token_verify import BearerTokenMiddleware
 
 
-app = create_app()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 初始化数据库
+    await create_database()
+    await init_db()
+    yield
 
-# 初始化数据库
-create_database()
-init_db()
+app = create_app(lifespan=lifespan)
+
 
 app.include_router(example_router, prefix="/example")
 app.add_middleware(BearerTokenMiddleware)

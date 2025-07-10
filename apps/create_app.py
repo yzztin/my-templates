@@ -2,14 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from configs.log import setup_logger
+from configs.log import setup_logger, setup_logger_to_file
 from configs import BASE_CONFIG
 from utils.exceptions import ExceedRateLimitException
 
 
-def create_app() -> FastAPI:
+def create_app(lifespan=None) -> FastAPI:
     # 初始化日志
     setup_logger()
+    # setup_logger_to_file("service")
 
     if BASE_CONFIG.IS_PRODUCTION:
         docs_url = None

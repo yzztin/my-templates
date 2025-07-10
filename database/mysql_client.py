@@ -1,8 +1,9 @@
 import logging
-from typing import Generator
+from typing import AsyncGenerator
 
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 from configs import BASE_CONFIG, MYSQL_CONFIG
 
@@ -11,29 +12,19 @@ logger = logging.getLogger(__name__)
 # 声明 Base，用于后续模型继承
 Base = declarative_base()
 
-# 初始化为空，稍后由 init_db() 设置
-engine = None
-SessionLocal = None
+# 创建数据库引擎
+engine = create_async_engine(MYSQL_CONFIG.SQLALCHEMY_DATABASE_URI, echo=True, future=True)
+# 创建异步会话工厂
+AsyncSessionLocal = sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
 
 
-def init_db():
+async def init_db():
     """
     初始化数据库连接与表结构
     """
-    global engine, SessionLocal
-
     try:
-        # 创建数据库引擎
-        engine = create_engine(
-            MYSQL_CONFIG.SQLALCHEMY_DATABASE_URI,
-            echo=False,
-            future=True,
-        )
-        # 创建会话工厂
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-        # 创建所有模型对应的表
-        Base.metadata.create_all(bind=engine)
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
         logger.info("数据库初始化完成")
 
@@ -41,22 +32,22 @@ def init_db():
         logger.exception(f"数据库初始化失败: {e}")
 
 
-def create_database():
+async def create_database():
     """
     创建数据库（如果不存在）
     """
     try:
-        temp_engine = create_engine(MYSQL_CONFIG.SQLALCHEMY_URI_WITHOUT_DATABASE, echo=True, future=True)
+        temp_engine = create_engine(MYSQL_CONFIG.SQLALCHEMY_URI_WITHOUT_DATABASE)
         with temp_engine.connect() as conn:
             create_sql = f"CREATE DATABASE IF NOT EXISTS `{BASE_CONFIG.MYSQL_DB_NAME}`"
             conn.execute(text(create_sql))
+            conn.commit()
+
             logger.info(f"数据库 {BASE_CONFIG.MYSQL_DB_NAME} 已创建")
     except Exception as e:
         logger.exception(f"创建数据库 {BASE_CONFIG.MYSQL_DB_NAME} 失败: {e}")
 
-def get_db() -> Generator[Session, None, None]:
-    db = SessionLocal()  # type: ignore
-    try:
-        yield db
-    finally:
-        db.close()
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSessionLocal() as db_session:
+        yield db_session
