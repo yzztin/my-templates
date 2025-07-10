@@ -1,5 +1,4 @@
 import logging
-import os.path
 from logging.handlers import RotatingFileHandler
 
 from configs import BASE_CONFIG
@@ -20,11 +19,12 @@ def setup_logger():
 
     # 设置第三方库特定的日志级别
     logging.getLogger("werkzeug").setLevel(log_level)
-    
 
-def setup_logger_to_file():
+
+def setup_logger_to_file(log_file_name: str):
     """
     设置日志记录到文件
+    :param log_file_name: 保存的日志文件名，示例：service
     """
     log_level = getattr(logging, BASE_CONFIG.LOG_LEVEL.upper(), logging.INFO)
 
@@ -36,7 +36,7 @@ def setup_logger_to_file():
     logger.setLevel(log_level)
 
     # 创建一个文件处理器，并设置日志文件的最大大小和备份数量
-    file_name = os.path.join(BASE_CONFIG.STORAGE_PATH, "xxx.log")
+    file_name = BASE_CONFIG.ABSOLUTE_BASE_PATH / f"{log_file_name}.log"
     file_handler = RotatingFileHandler(
         filename=file_name,
         maxBytes=10 * 1024 * 1024,  # 10 MB
