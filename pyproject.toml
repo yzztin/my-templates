@@ -22,12 +22,6 @@ dev = [
     "httpx>=0.25.0",
 ]
 
-[tool.ruff]
-line-length = 120
-target-version = "py311"
-ignore = ["E402", "E722", "F401"]
-
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
@@ -35,3 +29,12 @@ log_cli = true
 log_cli_level = "DEBUG"
 addopts = ["-vv", "--capture=no", "--show-capture=no", "--showlocals", "--tb=long"]
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+ignore = ["E402", "E722", "F401"]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
